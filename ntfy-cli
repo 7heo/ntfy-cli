@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# BEGIN config
+_server="https://ntfy.sh"  # Modify this to use another server
+_topic="PUT_YOUR_TOPIC_HERE"
+_allow_triggers=0  # Allow empty messages
+# END config
+
+command -v curl >/dev/null || {
+	echo "$0 requires 'curl' to be installed and in the PATH. You must correct this to use it."
+	exit 1
+}
+
+if [ $# -gt 0 ]; then
+	_msg="$*"
+else
+	echo "No arguments given, reading message from stdin..." >&2
+	_msg="$(cat -)"
+fi
+
+[ $_allow_triggers -eq 0 ] && [ -z "$_msg" ] && exit 0
+
+curl -d "$_msg" "$_server/$_topic"
